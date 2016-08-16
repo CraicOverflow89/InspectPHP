@@ -81,7 +81,7 @@
 		$type = gettype($object);
 
 		// Class
-		if($type == "object") {return (object) array("label" => "VALUE", "html" => "object value", "id" => uniqid());}
+		if($type == "object") {return inspectRenderVarObject($object);}
 
 		// Array
 		if($type == "array") {return inspectRenderVarArray($object);}
@@ -115,6 +115,52 @@
 		// Table End
 		$html .= '</table>';
 		return (object) array("label" => "ELEMENTS", "html" => $html, "id" => uniqid());
+	}
+
+	function inspectRenderVarObject($object)
+	{
+		// NOTE: need to list methods with details, not just method names as strings
+		// NOTE: need to display class path (file location?)
+
+		// Styles
+		$style = inspectStyle();
+
+		// Table Start
+		$html = '<table style = "'.$style->table.'">';
+
+		// Methods
+		$methods = get_class_methods($object);
+		if(count($methods))
+		{
+			for($m = 0; $m < count($methods); $m ++)
+			{
+				$html .= '<tr valign = "top">';
+				$html .= '<td style = "'.$style->td.'">';
+				$html .= $m;
+				$html .= '</td>';
+				$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+				$html .= inspectRender($methods[$m], false);
+				$html .= '</td>';
+				$html .= '</tr>';
+			}
+		}
+
+		// No Methods (NOTE: come back to this - abstract into unique expandable td like properties)
+		else
+		{
+			$html .= '<tr valign = "top">';
+			$html .= '<td style = "'.$style->td.'">';
+			$html .= '';
+			$html .= '</td>';
+			$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+			$html .= 'NO METHODS';
+			$html .= '</td>';
+			$html .= '</tr>'; 
+		}
+
+		// Table End
+		$html .= '</table>';
+		return (object) array("label" => "METHODS", "html" => $html, "id" => uniqid());
 	}
 
 	function inspectRenderVarSimple($object)
