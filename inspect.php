@@ -30,11 +30,14 @@
 		$html = '<table style = "'.$style->table.'">';
 
 		// Title
-		$html .= '<tr valign = "top">';
-		$html .= '<td colspan = "2" style = "'.$style->td.'">';
-		$html .= 'INSPECT';
-		$html .= '</td>';
-		$html .= '</tr>';
+		if($title)
+		{
+			$html .= '<tr valign = "top">';
+			$html .= '<td colspan = "2" style = "'.$style->td.'">';
+			$html .= 'INSPECT';
+			$html .= '</td>';
+			$html .= '</tr>';
+		}
 
 		// Class
 		$class = inspectClass($object);
