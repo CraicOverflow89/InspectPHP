@@ -99,14 +99,15 @@
 		$html = '<table style = "'.$style->table.'">';
 
 		// Elements
-		for($e = 0; $e < count($object); $e ++)
+		$keys = array_keys($object);
+		for($e = 0; $e < count($keys); $e ++)
 		{
 			$html .= '<tr valign = "top">';
 			$html .= '<td style = "'.$style->td.'">';
-			$html .= $e;
+			$html .= strtoupper($keys[$e]);
 			$html .= '</td>';
 			$html .= '<td style = "'.$style->td.' '.$style->value.'">';
-			$html .= inspectRender($object[$e], false);
+			$html .= inspectRender($object[$keys[$e]], false);
 			$html .= '</td>';
 			$html .= '</tr>';
 		}
