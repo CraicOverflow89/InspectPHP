@@ -11,7 +11,7 @@
 
 	function inspectClass($object)
 	{
-		// Object Type
+		// Type
 		$type = gettype($object);
 
 		// Class
@@ -77,10 +77,47 @@
 
 	function inspectRenderVar($object)
 	{
-		// Temp: Complex
-		if(gettype($object) == "object") {return (object) array("label" => "VALUE", "html" => "object value", "id" => uniqid());}
+		// Type
+		$type = gettype($object);
+
+		// Class
+		if($type == "object") {return (object) array("label" => "VALUE", "html" => "object value", "id" => uniqid());}
+
+		// Array
+		if($type == "array") {return inspectRenderVarArray($object);}
 
 		// Primitive
+		return inspectRenderVarSimple($object);
+	}
+
+	function inspectRenderVarArray($object)
+	{
+		// Styles
+		$style = inspectStyle();
+
+		// Table Start
+		$html = '<table style = "'.$style->table.'">';
+
+		// Elements
+		for($e = 0; $e < count($object); $e ++)
+		{
+			$html .= '<tr valign = "top">';
+			$html .= '<td style = "'.$style->td.'">';
+			$html .= $e;
+			$html .= '</td>';
+			$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+			$html .= inspectRender($object[$e], false);
+			$html .= '</td>';
+			$html .= '</tr>';
+		}
+
+		// Table End
+		$html .= '</table>';
+		return (object) array("label" => "ELEMENTS", "html" => $html, "id" => uniqid());
+	}
+
+	function inspectRenderVarSimple($object)
+	{
 		return (object) array("label" => "VALUE", "html" => $object, "id" => uniqid());
 	}
 
