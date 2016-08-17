@@ -3,6 +3,11 @@
 	inspect("hello");
 	inspect(123);
 	inspect(true);
+	inspect([1, 2, 3]);
+	$myArray = ["name" => "Jamie", "age" => 27];
+	inspect($myArray);
+	inspect((object) $myArray);
+	inspect(new mysqli());
 
 	function inspect($object)
 	{
@@ -50,24 +55,8 @@
 		$html .= '</td>';
 		$html .= '</tr>';
 
-		// Class
-		// NOTE: need to put specifics in here
-		// NOTE: how to handle queries? special object? typeof mysqli result?
-
 		// Value
-		// NOTE: merge specifics with above? primitives?
-		$value = inspectRenderVar($object);
-		$onClick = "var id = this.id.split('|')[1];if(document.getElementById('__inspectValueStatus|' + id).value == 'expand') {document.getElementById('__inspectValueSpan|' + id).style = 'display:none;';document.getElementById('__inspectValueHide|' + id).style = 'display:inline;';document.getElementById('__inspectValueStatus|' + id).value = 'hidden';} else {document.getElementById('__inspectValueSpan|' + id).style = 'display:inline;';document.getElementById('__inspectValueHide|' + id).style = 'display:none;';document.getElementById('__inspectValueStatus|' + id).value = 'expand';}";
-		$html .= '<tr valign = "top">';
-		$html .= '<td id = "__inspectValueLabel|'.$value->id.'" style = "'.$style->td.' cursor:pointer;" onClick = "'.$onClick.'">';
-		$html .= '<input type = "hidden" id = "__inspectValueStatus|'.$value->id.'" value = "expand" />';
-		$html .= $value->label;
-		$html .= '</td>';
-		$html .= '<td style = "'.$style->td.' '.$style->value.'">';
-		$html .= '<span id = "__inspectValueSpan|'.$value->id.'" style = "display:inline;">'.$value->html.'</span>';
-		$html .= '<span id = "__inspectValueHide|'.$value->id.'" style = "display:none;">...</span>';
-		$html .= '</td>';
-		$html .= '</tr>';
+		$html .= inspectRenderVar($object);
 
 		// Table End
 		$html .= '</table>';
@@ -91,6 +80,31 @@
 	}
 
 	function inspectRenderVarArray($object)
+	{
+		// Styles
+		$style = inspectStyle();
+
+		// Value
+		$value = inspectRenderVarArrayValue($object);
+
+		// Javascript
+		$onClick = "var id = this.id.split('|')[1];if(document.getElementById('__inspectValueStatus|' + id).value == 'expand') {document.getElementById('__inspectValueSpan|' + id).style = 'display:none;';document.getElementById('__inspectValueHide|' + id).style = 'display:inline;';document.getElementById('__inspectValueStatus|' + id).value = 'hidden';} else {document.getElementById('__inspectValueSpan|' + id).style = 'display:inline;';document.getElementById('__inspectValueHide|' + id).style = 'display:none;';document.getElementById('__inspectValueStatus|' + id).value = 'expand';}";
+
+		// HTML
+		$html = '<tr valign = "top">';
+		$html .= '<td id = "__inspectValueLabel|'.$value->id.'" style = "'.$style->td.' cursor:pointer;" onClick = "'.$onClick.'">';
+		$html .= '<input type = "hidden" id = "__inspectValueStatus|'.$value->id.'" value = "expand" />';
+		$html .= $value->label;
+		$html .= '</td>';
+		$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+		$html .= '<span id = "__inspectValueSpan|'.$value->id.'" style = "display:inline;">'.$value->html.'</span>';
+		$html .= '<span id = "__inspectValueHide|'.$value->id.'" style = "display:none;">...</span>';
+		$html .= '</td>';
+		$html .= '</tr>';
+		return $html;
+	}
+
+	function inspectRenderVarArrayValue($object)
 	{
 		// Styles
 		$style = inspectStyle();
@@ -119,9 +133,49 @@
 
 	function inspectRenderVarObject($object)
 	{
-		// NOTE: need to list methods with details, not just method names as strings
-		// NOTE: need to display class path (file location?)
+		// Styles
+		$style = inspectStyle();
 
+		// Property Value
+		$value = inspectRenderVarObjectProperty($object);
+
+		// Property Javascript
+		$onClick = "var id = this.id.split('|')[1];if(document.getElementById('__inspectPropertyStatus|' + id).value == 'expand') {document.getElementById('__inspectPropertySpan|' + id).style = 'display:none;';document.getElementById('__inspectPropertyHide|' + id).style = 'display:inline;';document.getElementById('__inspectPropertyStatus|' + id).value = 'hidden';} else {document.getElementById('__inspectPropertySpan|' + id).style = 'display:inline;';document.getElementById('__inspectPropertyHide|' + id).style = 'display:none;';document.getElementById('__inspectPropertyStatus|' + id).value = 'expand';}";
+
+		// Property HTML
+		$html = '<tr valign = "top">';
+		$html .= '<td id = "__inspectPropertyLabel|'.$value->id.'" style = "'.$style->td.' cursor:pointer;" onClick = "'.$onClick.'">';
+		$html .= '<input type = "hidden" id = "__inspectPropertyStatus|'.$value->id.'" value = "expand" />';
+		$html .= $value->label;
+		$html .= '</td>';
+		$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+		$html .= '<span id = "__inspectPropertySpan|'.$value->id.'" style = "display:inline;">'.$value->html.'</span>';
+		$html .= '<span id = "__inspectPropertyHide|'.$value->id.'" style = "display:none;">...</span>';
+		$html .= '</td>';
+		$html .= '</tr>';
+
+		// Method Value
+		$value = inspectRenderVarObjectMethod($object);
+
+		// Method Javascript
+		$onClick = "var id = this.id.split('|')[1];if(document.getElementById('__inspectMethodStatus|' + id).value == 'expand') {document.getElementById('__inspectMethodSpan|' + id).style = 'display:none;';document.getElementById('__inspectMethodHide|' + id).style = 'display:inline;';document.getElementById('__inspectMethodStatus|' + id).value = 'hidden';} else {document.getElementById('__inspectMethodSpan|' + id).style = 'display:inline;';document.getElementById('__inspectMethodHide|' + id).style = 'display:none;';document.getElementById('__inspectMethodStatus|' + id).value = 'expand';}";
+
+		// Method HTML
+		$html .= '<tr valign = "top">';
+		$html .= '<td id = "__inspectMethodLabel|'.$value->id.'" style = "'.$style->td.' cursor:pointer;" onClick = "'.$onClick.'">';
+		$html .= '<input type = "hidden" id = "__inspectMethodStatus|'.$value->id.'" value = "expand" />';
+		$html .= $value->label;
+		$html .= '</td>';
+		$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+		$html .= '<span id = "__inspectMethodSpan|'.$value->id.'" style = "display:inline;">'.$value->html.'</span>';
+		$html .= '<span id = "__inspectMethodHide|'.$value->id.'" style = "display:none;">...</span>';
+		$html .= '</td>';
+		$html .= '</tr>';
+		return $html;
+	}
+
+	function inspectRenderVarObjectMethod($object)
+	{
 		// Styles
 		$style = inspectStyle();
 
@@ -130,16 +184,17 @@
 
 		// Methods
 		$methods = get_class_methods($object);
+		$keys = array_keys($methods);
 		if(count($methods))
 		{
 			for($m = 0; $m < count($methods); $m ++)
 			{
 				$html .= '<tr valign = "top">';
 				$html .= '<td style = "'.$style->td.'">';
-				$html .= $m;
+				$html .= strtoupper($keys[$m]);
 				$html .= '</td>';
 				$html .= '<td style = "'.$style->td.' '.$style->value.'">';
-				$html .= inspectRender($methods[$m], false);
+				$html .= inspectRender($methods[$keys[$m]], false);
 				$html .= '</td>';
 				$html .= '</tr>';
 			}
@@ -163,9 +218,73 @@
 		return (object) array("label" => "METHODS", "html" => $html, "id" => uniqid());
 	}
 
+	function inspectRenderVarObjectProperty($object)
+	{
+		// Styles
+		$style = inspectStyle();
+
+		// Table Start
+		$html = '<table style = "'.$style->table.'">';
+
+		// Properties
+		$properties = get_object_vars($object);
+		$keys = array_keys($properties);
+		if(count($properties))
+		{
+			for($p = 0; $p < count($keys); $p ++)
+			{
+				$html .= '<tr valign = "top">';
+				$html .= '<td style = "'.$style->td.'">';
+				$html .= strtoupper($keys[$p]);
+				$html .= '</td>';
+				$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+				$html .= inspectRender($properties[$keys[$p]], false);
+				$html .= '</td>';
+				$html .= '</tr>';
+			}
+		}
+
+		// No Properties
+		else
+		{
+			$html .= '<tr valign = "top">';
+			$html .= '<td style = "'.$style->td.'">';
+			$html .= '';
+			$html .= '</td>';
+			$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+			$html .= 'NO PROPERTIES';
+			$html .= '</td>';
+			$html .= '</tr>'; 
+		}
+
+		// Table End
+		$html .= '</table>';
+		return (object) array("label" => "PROPERTIES", "html" => $html, "id" => uniqid());
+	}
+
 	function inspectRenderVarSimple($object)
 	{
-		return (object) array("label" => "VALUE", "html" => $object, "id" => uniqid());
+		// Styles
+		$style = inspectStyle();
+
+		// Value
+		$value = (object) array("label" => "VALUE", "html" => $object, "id" => uniqid());
+
+		// Javascript
+		$onClick = "var id = this.id.split('|')[1];if(document.getElementById('__inspectValueStatus|' + id).value == 'expand') {document.getElementById('__inspectValueSpan|' + id).style = 'display:none;';document.getElementById('__inspectValueHide|' + id).style = 'display:inline;';document.getElementById('__inspectValueStatus|' + id).value = 'hidden';} else {document.getElementById('__inspectValueSpan|' + id).style = 'display:inline;';document.getElementById('__inspectValueHide|' + id).style = 'display:none;';document.getElementById('__inspectValueStatus|' + id).value = 'expand';}";
+
+		// HTML
+		$html = '<tr valign = "top">';
+		$html .= '<td id = "__inspectValueLabel|'.$value->id.'" style = "'.$style->td.' cursor:pointer;" onClick = "'.$onClick.'">';
+		$html .= '<input type = "hidden" id = "__inspectValueStatus|'.$value->id.'" value = "expand" />';
+		$html .= $value->label;
+		$html .= '</td>';
+		$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+		$html .= '<span id = "__inspectValueSpan|'.$value->id.'" style = "display:inline;">'.$value->html.'</span>';
+		$html .= '<span id = "__inspectValueHide|'.$value->id.'" style = "display:none;">...</span>';
+		$html .= '</td>';
+		$html .= '</tr>';
+		return $html;
 	}
 
 	function inspectStyle()
