@@ -1,14 +1,5 @@
 <?php
 
-	inspect("hello");
-	inspect(123);
-	inspect(true);
-	inspect([1, 2, 3]);
-	$myArray = ["name" => "Jamie", "age" => 27];
-	inspect($myArray);
-	inspect((object) $myArray);
-	inspect(new mysqli());
-
 	function inspect($object)
 	{
 		echo inspectRender($object, true);
@@ -116,12 +107,21 @@
 		$keys = array_keys($object);
 		for($e = 0; $e < count($keys); $e ++)
 		{
+			// Unique ID
+			$id = uniqid();
+
+			// Javascript
+			$onClick = "var id = this.id.split('|')[1];if(document.getElementById('__inspectElementStatus|' + id).value == 'expand') {document.getElementById('__inspectElementSpan|' + id).style = 'display:none;';document.getElementById('__inspectElementHide|' + id).style = 'display:inline;';document.getElementById('__inspectElementStatus|' + id).value = 'hidden';} else {document.getElementById('__inspectElementSpan|' + id).style = 'display:inline;';document.getElementById('__inspectElementHide|' + id).style = 'display:none;';document.getElementById('__inspectElementStatus|' + id).value = 'expand';}";
+
+			// HTML
 			$html .= '<tr valign = "top">';
-			$html .= '<td style = "'.$style->td.'">';
+			$html .= '<td id = "__inspectElementLabel|'.$id.'" style = "'.$style->td.' cursor:pointer;" onClick = "'.$onClick.'">';
+			$html .= '<input type = "hidden" id = "__inspectElementStatus|'.$id.'" value = "expand" />';
 			$html .= strtoupper($keys[$e]);
 			$html .= '</td>';
 			$html .= '<td style = "'.$style->td.' '.$style->value.'">';
-			$html .= inspectRender($object[$keys[$e]], false);
+			$html .= '<span id = "__inspectElementSpan|'.$id.'" style = "display:inline;">'.inspectRender($object[$keys[$e]], false).'</span>';
+			$html .= '<span id = "__inspectElementHide|'.$id.'" style = "display:none;">...</span>';
 			$html .= '</td>';
 			$html .= '</tr>';
 		}
@@ -268,6 +268,7 @@
 		$style = inspectStyle();
 
 		// Value
+		//$value = (object) array("label" => "VALUE", "html" => $object, "id" => uniqid());
 		$value = (object) array("label" => "VALUE", "html" => $object, "id" => uniqid());
 
 		// Javascript
