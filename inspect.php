@@ -299,12 +299,18 @@
 	function inspectStyle()
 	{
 		// Theme
-		$colourBkg = "88A583";
-		$colourLight = "BCCBBC";
-		$colourBorder = "000000";
+		$theme = array(
+			"nature" => array("bkg" => "88A583", "light" => "BCCBBC", "border" => "000000"),
+			"sand" => array("bkg" => "A58883", "light" => "CBBCBC", "border" => "000000"),
+			"slate" => array("bkg" => "8883A5", "light" => "BCBCCB", "border" => "000000"),
+			"stone" => array("bkg" => "888888", "light" => "BCBCBC", "border" => "000000")
+		);
+
+		// Scheme
+		$scheme = "nature";
 
 		// Styles
-		return (object) array("table" => "background-color: #".$colourBkg."; border: 1px solid #".$colourBorder."; border-collapse: collapse; font-family: monospace; padding: 5px; padding-left: 10px; padding-right: 10px;", "td" => "border: 1px solid #".$colourBorder."; border-collapse :collapse; padding: 5px; padding-left: 10px; padding-right: 10px;", "value" => "background-color: #".$colourLight.";");
+		return (object) array("table" => "background-color: #".$theme[$scheme]["bkg"]."; border: 1px solid #".$theme[$scheme]["border"]."; border-collapse: collapse; font-family: monospace; padding: 5px; padding-left: 10px; padding-right: 10px;", "td" => "border: 1px solid #".$theme[$scheme]["border"]."; border-collapse :collapse; padding: 5px; padding-left: 10px; padding-right: 10px;", "value" => "background-color: #".$theme[$scheme]["light"].";");
 	}
 
 ?>
