@@ -100,34 +100,42 @@
 		// Styles
 		$style = inspectStyle();
 
-		// Table Start
-		$html = '<table style = "'.$style->table.'">';
-
 		// Elements
-		$keys = array_keys($object);
-		for($e = 0; $e < count($keys); $e ++)
+		if(count($keys))
 		{
-			// Unique ID
-			$id = uniqid();
+			// Table Start
+			$html = '<table style = "'.$style->table.'">';
 
-			// Javascript
-			$onClick = "var id = this.id.split('|')[1];if(document.getElementById('__inspectElementStatus|' + id).value == 'expand') {document.getElementById('__inspectElementSpan|' + id).style = 'display:none;';document.getElementById('__inspectElementHide|' + id).style = 'display:inline;';document.getElementById('__inspectElementStatus|' + id).value = 'hidden';} else {document.getElementById('__inspectElementSpan|' + id).style = 'display:inline;';document.getElementById('__inspectElementHide|' + id).style = 'display:none;';document.getElementById('__inspectElementStatus|' + id).value = 'expand';}";
+			// Elements
+			$keys = array_keys($object);
+			for($e = 0; $e < count($keys); $e ++)
+			{
+				// Unique ID
+				$id = uniqid();
 
-			// HTML
-			$html .= '<tr valign = "top">';
-			$html .= '<td id = "__inspectElementLabel|'.$id.'" style = "'.$style->td.' cursor:pointer;" onClick = "'.$onClick.'">';
-			$html .= '<input type = "hidden" id = "__inspectElementStatus|'.$id.'" value = "expand" />';
-			$html .= strtoupper($keys[$e]);
-			$html .= '</td>';
-			$html .= '<td style = "'.$style->td.' '.$style->value.'">';
-			$html .= '<span id = "__inspectElementSpan|'.$id.'" style = "display:inline;">'.inspectRender($object[$keys[$e]], false).'</span>';
-			$html .= '<span id = "__inspectElementHide|'.$id.'" style = "display:none;">...</span>';
-			$html .= '</td>';
-			$html .= '</tr>';
+				// Javascript
+				$onClick = "var id = this.id.split('|')[1];if(document.getElementById('__inspectElementStatus|' + id).value == 'expand') {document.getElementById('__inspectElementSpan|' + id).style = 'display:none;';document.getElementById('__inspectElementHide|' + id).style = 'display:inline;';document.getElementById('__inspectElementStatus|' + id).value = 'hidden';} else {document.getElementById('__inspectElementSpan|' + id).style = 'display:inline;';document.getElementById('__inspectElementHide|' + id).style = 'display:none;';document.getElementById('__inspectElementStatus|' + id).value = 'expand';}";
+
+				// HTML
+				$html .= '<tr valign = "top">';
+				$html .= '<td id = "__inspectElementLabel|'.$id.'" style = "'.$style->td.' cursor:pointer;" onClick = "'.$onClick.'">';
+				$html .= '<input type = "hidden" id = "__inspectElementStatus|'.$id.'" value = "expand" />';
+				$html .= strtoupper($keys[$e]);
+				$html .= '</td>';
+				$html .= '<td style = "'.$style->td.' '.$style->value.'">';
+				$html .= '<span id = "__inspectElementSpan|'.$id.'" style = "display:inline;">'.inspectRender($object[$keys[$e]], false).'</span>';
+				$html .= '<span id = "__inspectElementHide|'.$id.'" style = "display:none;">...</span>';
+				$html .= '</td>';
+				$html .= '</tr>';
+			}
+
+			// Table End
+			$html .= '</table>';
 		}
 
-		// Table End
-		$html .= '</table>';
+		// No Elements
+		else {$html = "NO ELEMENTS";}
+
 		return (object) array("label" => "ELEMENTS", "html" => $html, "id" => uniqid());
 	}
 
