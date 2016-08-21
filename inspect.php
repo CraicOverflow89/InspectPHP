@@ -101,7 +101,7 @@
 		$style = inspectStyle();
 
 		// Elements
-		if(count($keys))
+		if(count($object))
 		{
 			// Table Start
 			$html = '<table style = "'.$style->table.'">';
